@@ -1,4 +1,5 @@
-import { PoolStatus, RaydiumLCPTradeEvent, TradeDirection } from '../../../types/raydium';
+import { Schema } from 'borsh';
+import { PoolStatus, RaydiumLCPTradeEvent } from '../../../types/raydium';
 export declare class RaydiumLCPTradeLayout {
     poolState: Uint8Array;
     totalBaseSell: bigint;
@@ -13,7 +14,7 @@ export declare class RaydiumLCPTradeLayout {
     protocolFee: bigint;
     platformFee: bigint;
     shareFee: bigint;
-    tradeDirection: TradeDirection;
+    tradeDirection: number;
     poolStatus: PoolStatus;
     constructor(fields: {
         poolState: Uint8Array;
@@ -29,12 +30,10 @@ export declare class RaydiumLCPTradeLayout {
         protocolFee: bigint;
         platformFee: bigint;
         shareFee: bigint;
-        tradeDirection: TradeDirection;
+        tradeDirection: number;
         poolStatus: PoolStatus;
     });
-    static schema: Map<typeof RaydiumLCPTradeLayout, {
-        kind: string;
-        fields: (string | number[])[][];
-    }>;
+    static schema: Schema;
+    static fromBuffer(buffer: Buffer): RaydiumLCPTradeLayout;
     toObject(): RaydiumLCPTradeEvent;
 }

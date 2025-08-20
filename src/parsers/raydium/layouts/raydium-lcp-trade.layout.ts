@@ -1,4 +1,5 @@
 import base58 from 'bs58';
+import { deserializeUnchecked, Schema } from 'borsh';
 import { PoolStatus, RaydiumLCPTradeEvent, TradeDirection } from '../../../types/raydium';
 
 export class RaydiumLCPTradeLayout {
@@ -15,7 +16,7 @@ export class RaydiumLCPTradeLayout {
   protocolFee: bigint;
   platformFee: bigint;
   shareFee: bigint;
-  tradeDirection: TradeDirection;
+  tradeDirection: number;
   poolStatus: PoolStatus;
 
   constructor(fields: {
@@ -32,7 +33,7 @@ export class RaydiumLCPTradeLayout {
     protocolFee: bigint;
     platformFee: bigint;
     shareFee: bigint;
-    tradeDirection: TradeDirection;
+    tradeDirection: number;
     poolStatus: PoolStatus;
   }) {
     this.poolState = fields.poolState;
@@ -52,7 +53,7 @@ export class RaydiumLCPTradeLayout {
     this.poolStatus = fields.poolStatus;
   }
 
-  static schema = new Map([
+  static schema: Schema = new Map([
     [
       RaydiumLCPTradeLayout,
       {
@@ -77,6 +78,10 @@ export class RaydiumLCPTradeLayout {
       },
     ],
   ]);
+
+  static fromBuffer(buffer: Buffer): RaydiumLCPTradeLayout {
+    return deserializeUnchecked(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, buffer);
+  }
 
   toObject(): RaydiumLCPTradeEvent {
     return {

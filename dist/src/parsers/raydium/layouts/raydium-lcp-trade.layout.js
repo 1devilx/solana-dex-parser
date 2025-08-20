@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RaydiumLCPTradeLayout = void 0;
 const bs58_1 = __importDefault(require("bs58"));
+const borsh_1 = require("borsh");
 const raydium_1 = require("../../../types/raydium");
 class RaydiumLCPTradeLayout {
     constructor(fields) {
@@ -23,6 +24,9 @@ class RaydiumLCPTradeLayout {
         this.shareFee = fields.shareFee;
         this.tradeDirection = fields.tradeDirection;
         this.poolStatus = fields.poolStatus;
+    }
+    static fromBuffer(buffer) {
+        return (0, borsh_1.deserializeUnchecked)(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, buffer);
     }
     toObject() {
         return {
