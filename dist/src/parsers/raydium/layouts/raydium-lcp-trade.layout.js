@@ -3,10 +3,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RaydiumLCPTradeLayout = void 0;
+exports.RaydiumLCPTradeLayout = exports.TradeDirectionSchema = exports.TradeDirectionClass = void 0;
 const bs58_1 = __importDefault(require("bs58"));
 const borsh_1 = require("borsh");
 const raydium_1 = require("../../../types/raydium");
+class TradeDirectionClass {
+    constructor(fields) {
+        this.variant = fields.variant;
+    }
+}
+exports.TradeDirectionClass = TradeDirectionClass;
+exports.TradeDirectionSchema = new Map([
+    [
+        TradeDirectionClass,
+        {
+            kind: 'enum',
+            values: [
+                ['Buy', {}],
+                ['Sell', {}],
+            ],
+        },
+    ],
+]);
 class RaydiumLCPTradeLayout {
     constructor(fields) {
         this.poolState = fields.poolState;
@@ -42,7 +60,7 @@ class RaydiumLCPTradeLayout {
             protocolFee: this.protocolFee,
             platformFee: this.platformFee,
             shareFee: this.shareFee,
-            tradeDirection: this.tradeDirection === 0 ? raydium_1.TradeDirection.Buy : raydium_1.TradeDirection.Sell,
+            tradeDirection: this.tradeDirection.variant === 'Buy' ? raydium_1.TradeDirection.Buy : raydium_1.TradeDirection.Sell,
             poolStatus: this.poolStatus,
             baseMint: '',
             quoteMint: '',
@@ -70,10 +88,11 @@ RaydiumLCPTradeLayout.schema = new Map([
                 ['protocolFee', 'u64'],
                 ['platformFee', 'u64'],
                 ['shareFee', 'u64'],
-                ['tradeDirection', 'u8'],
+                ['tradeDirection', TradeDirectionClass],
                 ['poolStatus', 'u8'],
             ],
         },
     ],
+    ...exports.TradeDirectionSchema,
 ]);
 //# sourceMappingURL=raydium-lcp-trade.layout.js.map

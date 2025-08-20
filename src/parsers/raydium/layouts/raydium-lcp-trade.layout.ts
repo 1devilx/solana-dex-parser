@@ -2,6 +2,26 @@ import base58 from 'bs58';
 import { deserializeUnchecked, Schema } from 'borsh';
 import { PoolStatus, RaydiumLCPTradeEvent, TradeDirection } from '../../../types/raydium';
 
+export class TradeDirectionClass {
+  variant: 'Buy' | 'Sell';
+  constructor(fields: { variant: 'Buy' | 'Sell' }) {
+    this.variant = fields.variant;
+  }
+}
+
+export const TradeDirectionSchema: Schema = new Map([
+  [
+    TradeDirectionClass,
+    {
+      kind: 'enum',
+      values: [
+        ['Buy', {}],
+        ['Sell', {}],
+      ],
+    },
+  ],
+]);
+
 export class RaydiumLCPTradeLayout {
   poolState: Uint8Array;
   totalBaseSell: bigint;
@@ -16,7 +36,7 @@ export class RaydiumLCPTradeLayout {
   protocolFee: bigint;
   platformFee: bigint;
   shareFee: bigint;
-  tradeDirection: number;
+  tradeDirection: TradeDirectionClass;
   poolStatus: PoolStatus;
 
   constructor(fields: {
@@ -33,7 +53,7 @@ export class RaydiumLCPTradeLayout {
     protocolFee: bigint;
     platformFee: bigint;
     shareFee: bigint;
-    tradeDirection: number;
+    tradeDirection: TradeDirectionClass;
     poolStatus: PoolStatus;
   }) {
     this.poolState = fields.poolState;
@@ -72,11 +92,12 @@ export class RaydiumLCPTradeLayout {
           ['protocolFee', 'u64'],
           ['platformFee', 'u64'],
           ['shareFee', 'u64'],
-          ['tradeDirection', 'u8'],
+          ['tradeDirection', TradeDirectionClass],
           ['poolStatus', 'u8'],
         ],
       },
     ],
+    ...TradeDirectionSchema,
   ]);
 
   static fromBuffer(buffer: Buffer): RaydiumLCPTradeLayout {
@@ -97,7 +118,7 @@ export class RaydiumLCPTradeLayout {
       protocolFee: this.protocolFee,
       platformFee: this.platformFee,
       shareFee: this.shareFee,
-      tradeDirection: this.tradeDirection === 0 ? TradeDirection.Buy : TradeDirection.Sell,
+      tradeDirection: this.tradeDirection.variant === 'Buy' ? TradeDirection.Buy : TradeDirection.Sell,
       poolStatus: this.poolStatus,
       baseMint: '',
       quoteMint: '',
