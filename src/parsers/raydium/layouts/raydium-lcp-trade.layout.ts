@@ -92,7 +92,7 @@ export class RaydiumLCPTradeLayout {
       protocolFee: this.protocolFee,
       platformFee: this.platformFee,
       shareFee: this.shareFee,
-      tradeDirection: this.tradeDirection,
+      tradeDirection: this.tradeDirection === 0 ? TradeDirection.buy : TradeDirection.sell,
       poolStatus: this.poolStatus,
       baseMint: '',
       quoteMint: '',
