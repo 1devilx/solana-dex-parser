@@ -2,24 +2,27 @@ import base58 from 'bs58';
 import { deserializeUnchecked, Schema } from 'borsh';
 import { PoolStatus, RaydiumLCPTradeEvent, TradeDirection } from '../../../types/raydium';
 
-export class TradeDirectionClass {
-  variant: 'Buy' | 'Sell';
-  constructor(fields: { variant: 'Buy' | 'Sell' }) {
-    this.variant = fields.variant;
-  }
-}
+// Borsh-compatible enum variant classes
+export class Buy {}
+export class Sell {}
 
+// Enum wrapper
+export class TradeDirectionClass {}
+
+// Borsh schema for enum
 export const TradeDirectionSchema: Schema = new Map([
   [
     TradeDirectionClass,
     {
       kind: 'enum',
       values: [
-        ['Buy', {}],
-        ['Sell', {}],
+        ['Buy', Buy],
+        ['Sell', Sell],
       ],
     },
   ],
+  [Buy, { kind: 'struct', fields: [] }],
+  [Sell, { kind: 'struct', fields: [] }],
 ]);
 
 export class RaydiumLCPTradeLayout {
@@ -36,7 +39,7 @@ export class RaydiumLCPTradeLayout {
   protocolFee: bigint;
   platformFee: bigint;
   shareFee: bigint;
-  tradeDirection: TradeDirectionClass;
+  tradeDirection: Buy | Sell;
   poolStatus: PoolStatus;
 
   constructor(fields: {
@@ -53,7 +56,7 @@ export class RaydiumLCPTradeLayout {
     protocolFee: bigint;
     platformFee: bigint;
     shareFee: bigint;
-    tradeDirection: TradeDirectionClass;
+    tradeDirection: Buy | Sell;
     poolStatus: PoolStatus;
   }) {
     this.poolState = fields.poolState;
@@ -105,6 +108,8 @@ export class RaydiumLCPTradeLayout {
   }
 
   toObject(): RaydiumLCPTradeEvent {
+    const tradeDir = this.tradeDirection instanceof Buy ? TradeDirection.Buy : TradeDirection.Sell;
+
     return {
       poolState: base58.encode(this.poolState),
       totalBaseSell: this.totalBaseSell,
@@ -118,7 +123,7 @@ export class RaydiumLCPTradeLayout {
       protocolFee: this.protocolFee,
       platformFee: this.platformFee,
       shareFee: this.shareFee,
-      tradeDirection: this.tradeDirection.variant === 'Buy' ? TradeDirection.Buy : TradeDirection.Sell,
+      tradeDirection: tradeDir,
       poolStatus: this.poolStatus,
       baseMint: '',
       quoteMint: '',
