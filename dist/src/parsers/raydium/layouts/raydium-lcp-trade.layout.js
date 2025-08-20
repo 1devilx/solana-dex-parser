@@ -3,27 +3,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RaydiumLCPTradeLayout = exports.TradeDirectionSchema = exports.TradeDirectionClass = void 0;
+exports.RaydiumLCPTradeLayout = exports.TradeDirectionSchema = exports.TradeDirectionClass = exports.Sell = exports.Buy = void 0;
 const bs58_1 = __importDefault(require("bs58"));
 const borsh_1 = require("borsh");
 const raydium_1 = require("../../../types/raydium");
+// Borsh-compatible enum variant classes
+class Buy {
+}
+exports.Buy = Buy;
+class Sell {
+}
+exports.Sell = Sell;
+// Enum wrapper
 class TradeDirectionClass {
-    constructor(fields) {
-        this.variant = fields.variant;
-    }
 }
 exports.TradeDirectionClass = TradeDirectionClass;
+// Borsh schema for enum
 exports.TradeDirectionSchema = new Map([
     [
         TradeDirectionClass,
         {
             kind: 'enum',
             values: [
-                ['Buy', {}],
-                ['Sell', {}],
+                ['Buy', Buy],
+                ['Sell', Sell],
             ],
         },
     ],
+    [Buy, { kind: 'struct', fields: [] }],
+    [Sell, { kind: 'struct', fields: [] }],
 ]);
 class RaydiumLCPTradeLayout {
     constructor(fields) {
@@ -47,6 +55,7 @@ class RaydiumLCPTradeLayout {
         return (0, borsh_1.deserializeUnchecked)(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, buffer);
     }
     toObject() {
+        const tradeDir = this.tradeDirection instanceof Buy ? raydium_1.TradeDirection.Buy : raydium_1.TradeDirection.Sell;
         return {
             poolState: bs58_1.default.encode(this.poolState),
             totalBaseSell: this.totalBaseSell,
@@ -60,7 +69,7 @@ class RaydiumLCPTradeLayout {
             protocolFee: this.protocolFee,
             platformFee: this.platformFee,
             shareFee: this.shareFee,
-            tradeDirection: this.tradeDirection.variant === 'Buy' ? raydium_1.TradeDirection.Buy : raydium_1.TradeDirection.Sell,
+            tradeDirection: tradeDir,
             poolStatus: this.poolStatus,
             baseMint: '',
             quoteMint: '',

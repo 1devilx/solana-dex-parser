@@ -1,10 +1,10 @@
 import { Schema } from 'borsh';
 import { PoolStatus, RaydiumLCPTradeEvent } from '../../../types/raydium';
+export declare class Buy {
+}
+export declare class Sell {
+}
 export declare class TradeDirectionClass {
-    variant: 'Buy' | 'Sell';
-    constructor(fields: {
-        variant: 'Buy' | 'Sell';
-    });
 }
 export declare const TradeDirectionSchema: Schema;
 export declare class RaydiumLCPTradeLayout {
@@ -21,7 +21,7 @@ export declare class RaydiumLCPTradeLayout {
     protocolFee: bigint;
     platformFee: bigint;
     shareFee: bigint;
-    tradeDirection: TradeDirectionClass;
+    tradeDirection: Buy | Sell;
     poolStatus: PoolStatus;
     constructor(fields: {
         poolState: Uint8Array;
@@ -37,7 +37,7 @@ export declare class RaydiumLCPTradeLayout {
         protocolFee: bigint;
         platformFee: bigint;
         shareFee: bigint;
-        tradeDirection: TradeDirectionClass;
+        tradeDirection: Buy | Sell;
         poolStatus: PoolStatus;
     });
     static schema: Schema;
